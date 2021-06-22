@@ -1,10 +1,12 @@
+import { BrowserRouter } from 'react-router-dom'
 
-import { Home } from './pages/Home'
-import { NewRoom } from './pages/NewRoom';
+import { Routes } from './routes'
 
 export function App() {
 
 	return (
-		<NewRoom />
+		<BrowserRouter>
+			<Routes />
+		</BrowserRouter>
 	);
 }
