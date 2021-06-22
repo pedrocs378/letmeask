@@ -2,6 +2,8 @@ import { useHistory } from 'react-router-dom'
 
 import { Button } from '../../components/Button'
 
+import { useAuth } from '../../hooks/useAuth'
+
 import illustrationImg from '../../assets/images/illustration.svg'
 import logoImg from '../../assets/images/logo.svg'
 import googleIconImg from '../../assets/images/google-icon.svg'
@@ -9,9 +11,15 @@ import googleIconImg from '../../assets/images/google-icon.svg'
 import './styles.scss'
 
 export function Home() {
+	const { user, signInWithGoogle } = useAuth()
+
 	const history = useHistory()
 
-	function navigateToNewRoom() {
+	async function handleCreateRoom() {
+		if (!user) {
+			await signInWithGoogle()
+		}
+
 		history.push('/rooms/new')
 	}
 
@@ -27,7 +35,7 @@ export function Home() {
 					<img src={logoImg} alt="Letmeask" />
 					<button
 						className="create-room"
-						onClick={navigateToNewRoom}
+						onClick={handleCreateRoom}
 					>
 						<img src={googleIconImg} alt="Logo do google" />
 						Crie sua sala com o goole
