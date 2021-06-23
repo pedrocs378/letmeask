@@ -2,6 +2,7 @@ import { useState, useEffect, FormEvent } from 'react'
 import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
+import { GoSignOut } from 'react-icons/go'
 
 import { Button } from '../../components/Button'
 import { RoomCode } from '../../components/RoomCode'
@@ -43,7 +44,8 @@ export function Room() {
 	const [newQuestion, setNewQuestion] = useState('')
 	const [title, setTitle] = useState('')
 
-	const { user, signInWithGoogle } = useAuth()
+	const { user, signInWithGoogle, signOut } = useAuth()
+
 	const params = useParams<RoomParams>()
 	const roomId = params.id
 
@@ -133,6 +135,10 @@ export function Room() {
 							<div className="user-info">
 								<img src={user.avatar} alt={user.name} />
 								<span>{user.name}</span>
+
+								<button type="button" onClick={signOut}>
+									<GoSignOut />
+								</button>
 							</div>
 						) : (
 							<span>Para enviar uma pergunta, <button

@@ -12,6 +12,7 @@ interface User {
 interface AuthContextData {
 	user: User | undefined
 	signInWithGoogle: () => Promise<void>
+	signOut: () => Promise<void>
 }
 
 interface AuthProviderProps {
@@ -47,6 +48,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		}
 	}
 
+	async function signOut() {
+		await auth.signOut()
+	}
+
 	useEffect(() => {
 		const unsubscribe = auth.onAuthStateChanged(user => {
 			if (user) {
@@ -61,6 +66,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 					name: displayName,
 					avatar: photoURL
 				})
+			} else {
+				setUser(undefined)
 			}
 		})
 
@@ -70,7 +77,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 	}, [])
 
 	return (
-		<AuthContext.Provider value={{ user, signInWithGoogle }}>
+		<AuthContext.Provider value={{ user, signInWithGoogle, signOut }}>
 			{children}
 		</AuthContext.Provider>
 	)

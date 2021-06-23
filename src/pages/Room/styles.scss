@@ -77,6 +77,21 @@
 						color: #29292e;
 						font-weight: 500;
 						font-size: 14px;
+						line-height: 22px;
+					}
+
+					button {
+						margin-left: 8px;
+						font-size: 0;
+						background: transparent;
+						border: 0;
+						cursor: pointer;
+
+						svg {
+							height: 22px;
+							width: 22px;
+							color: #8354fd;
+						}
 					}
 				}
 
