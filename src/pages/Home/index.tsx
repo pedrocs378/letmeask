@@ -1,6 +1,7 @@
 import { FormEvent, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { toast } from 'react-toastify'
+import { toast } from 'react-hot-toast'
+import Loading from 'react-loading'
 
 import { Button } from '../../components/Button'
 
@@ -14,6 +15,7 @@ import googleIconImg from '../../assets/images/google-icon.svg'
 import './styles.scss'
 
 export function Home() {
+	const [isLoading, setIsLoading] = useState(false)
 	const [roomCode, setRoomCode] = useState('')
 
 	const { user, signInWithGoogle } = useAuth()
@@ -32,17 +34,26 @@ export function Home() {
 		event.preventDefault()
 
 		if (!roomCode.trim()) {
+			toast.error('Você deve inserir um código.')
+
 			return
 		}
 
-		const roomRef = await database.ref(`rooms/${roomCode}`).get()
+		setIsLoading(true)
 
-		if (!roomRef.exists()) {
-			toast.error('Room does not exists')
-			return
+		try {
+			const roomRef = await database.ref(`rooms/${roomCode}`).get()
+
+			if (!roomRef.exists()) {
+				toast.error('Sala não existe!')
+
+				return new Error()
+			}
+
+			history.push(`/rooms/${roomCode}`)
+		} finally {
+			setIsLoading(false)
 		}
-
-		history.push(`/rooms/${roomCode}`)
 	}
 
 	return (
@@ -60,7 +71,7 @@ export function Home() {
 						onClick={handleCreateRoom}
 					>
 						<img src={googleIconImg} alt="Logo do google" />
-						Crie sua sala com o goole
+						Crie sua sala com o google
 					</button>
 					<div className="separator">ou entre em uma sala</div>
 					<form onSubmit={handleJoinRoom}>
@@ -70,8 +81,15 @@ export function Home() {
 							value={roomCode}
 							onChange={event => setRoomCode(event.target.value)}
 						/>
-						<Button type="submit">
-							Entrar na sala
+						<Button type="submit" disabled={isLoading}>
+							{isLoading ? (
+								<Loading
+									type="bubbles"
+									color="#fff"
+									height={24}
+									width={24}
+								/>
+							) : "Entrar na sala"}
 						</Button>
 					</form>
 				</div>

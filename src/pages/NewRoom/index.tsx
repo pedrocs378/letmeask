@@ -1,5 +1,7 @@
 import { FormEvent, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
+import Loading from 'react-loading'
 
 import { Button } from '../../components/Button'
 
@@ -12,6 +14,7 @@ import logoImg from '../../assets/images/logo.svg'
 import './styles.scss'
 
 export function NewRoom() {
+	const [isLoading, setIsLoading] = useState(false)
 	const [newRoom, setNewRoom] = useState('')
 
 	const { user } = useAuth()
@@ -21,8 +24,11 @@ export function NewRoom() {
 		event.preventDefault()
 
 		if (!newRoom.trim()) {
+			toast.error('Você deve dar uma nome para sua sala.')
+
 			return
 		}
+		setIsLoading(true)
 
 		const roomRef = database.ref('rooms')
 
@@ -32,6 +38,8 @@ export function NewRoom() {
 		})
 
 		history.push(`/rooms/${firebaseRoom.key}`)
+
+		setIsLoading(false)
 	}
 
 	return (
@@ -52,8 +60,18 @@ export function NewRoom() {
 							value={newRoom}
 							onChange={event => setNewRoom(event.target.value)}
 						/>
-						<Button type="submit">
-							Criar sala
+						<Button
+							type="submit"
+							disabled={isLoading}
+						>
+							{isLoading ? (
+								<Loading
+									type="bubbles"
+									color="#fff"
+									height={24}
+									width={24}
+								/>
+							) : "Criar sala"}
 						</Button>
 					</form>
 					<p>
