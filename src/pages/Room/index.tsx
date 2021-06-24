@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, FormEvent } from 'react'
 import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
@@ -6,6 +6,7 @@ import { GoSignOut } from 'react-icons/go'
 
 import { Button } from '../../components/Button'
 import { RoomCode } from '../../components/RoomCode'
+import { Question } from '../../components/Question'
 
 import { useAuth } from '../../hooks/useAuth'
 import { database } from '../../services/firebase'
@@ -13,41 +14,20 @@ import { database } from '../../services/firebase'
 import logoImg from '../../assets/images/logo.svg'
 
 import './styles.scss'
-
-interface Question {
-	id: string
-	author: {
-		name: string
-		avatar: string
-	}
-	content: string
-	isAnswered: boolean
-	isHighlighted: boolean
-}
-
-type FirebaseQuestions = Record<string, {
-	author: {
-		name: string
-		avatar: string
-	}
-	content: string
-	isAnswered: boolean
-	isHighlighted: boolean
-}>
+import { useRoom } from '../../hooks/useRoom'
 
 interface RoomParams {
 	id: string
 }
 
 export function Room() {
-	const [questions, setQuestions] = useState<Question[]>([])
-	const [newQuestion, setNewQuestion] = useState('')
-	const [title, setTitle] = useState('')
-
-	const { user, signInWithGoogle, signOut } = useAuth()
-
 	const params = useParams<RoomParams>()
 	const roomId = params.id
+
+	const [newQuestion, setNewQuestion] = useState('')
+
+	const { user, signInWithGoogle, signOut } = useAuth()
+	const { title, questions } = useRoom(roomId)
 
 	async function handleSendQuestion(event: FormEvent) {
 		event.preventDefault()
@@ -84,25 +64,6 @@ export function Room() {
 			error: 'Algo deu errado! Tente novamente mais tarde'
 		})
 	}
-
-	useEffect(() => {
-		const roomRef = database.ref(`rooms/${roomId}`)
-
-		roomRef.on('value', room => {
-			const databaseRoom = room.val()
-			const firebaseQuestions: FirebaseQuestions = databaseRoom.questions ?? {}
-
-			const parsedQuestions = Object.entries(firebaseQuestions).map(([key, value]) => {
-				return {
-					...value,
-					id: key,
-				}
-			})
-
-			setTitle(databaseRoom.title)
-			setQuestions(parsedQuestions)
-		})
-	}, [roomId])
 
 	return (
 		<div id="page-room">
@@ -156,6 +117,18 @@ export function Room() {
 						</Button>
 					</div>
 				</form>
+
+				<div className="question-list">
+					{questions.map(question => {
+						return (
+							<Question
+								key={question.id}
+								content={question.content}
+								author={question.author}
+							/>
+						)
+					})}
+				</div>
 			</main>
 		</div>
 	)
