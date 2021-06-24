@@ -51,7 +51,7 @@ export function Home() {
 			}
 
 			if (roomRef.val().endedAt) {
-				toast.error('Esta sala já foi fechada.')
+				toast.error('Esta sala já foi encerrada.')
 
 				return new Error()
 			}

@@ -33,26 +33,34 @@ type FirebaseQuestions = Record<string, {
 export function useRoom(roomId: string) {
 	const { user } = useAuth()
 	const [questions, setQuestions] = useState<QuestionType[]>([])
+	const [authorId, setAuthorId] = useState('')
 	const [title, setTitle] = useState('')
+	const [isEnded, setIsEnded] = useState(false)
+	const [isLoading, setIsLoading] = useState(true)
 
 	useEffect(() => {
 		const roomRef = database.ref(`rooms/${roomId}`)
 
 		roomRef.on('value', room => {
+
 			const databaseRoom = room.val()
-			const firebaseQuestions: FirebaseQuestions = databaseRoom.questions ?? {}
+			const firebaseQuestions: FirebaseQuestions = databaseRoom?.questions ?? {}
 
 			const parsedQuestions = Object.entries(firebaseQuestions).map(([key, value]) => {
 				return {
 					...value,
 					id: key,
 					likeCount: Object.values(value.likes ?? {}).length,
-					likeId: Object.entries(value.likes ?? {}).find(([key, like]) => like.authorId === user?.id)?.[0]
+					likeId: Object.entries(value.likes ?? {}).find(([_, like]) => like.authorId === user?.id)?.[0]
 				}
 			})
 
-			setTitle(databaseRoom.title)
+			setTitle(databaseRoom?.title)
+			setAuthorId(databaseRoom?.authorId)
 			setQuestions(parsedQuestions)
+			setIsEnded(!!databaseRoom?.endedAt)
+
+			setIsLoading(false)
 		})
 
 		return () => {
@@ -60,5 +68,5 @@ export function useRoom(roomId: string) {
 		}
 	}, [roomId, user?.id])
 
-	return { questions, title }
+	return { questions, title, authorId, isEnded, isLoading }
 }

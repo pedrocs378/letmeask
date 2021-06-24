@@ -1,11 +1,13 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useParams, Link, useHistory } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
 
 import { Button } from '../../components/Button'
 import { RoomCode } from '../../components/RoomCode'
 import { Question } from '../../components/Question'
 
 import { useRoom } from '../../hooks/useRoom'
+import { useAuth } from '../../hooks/useAuth'
 import { database } from '../../services/firebase'
 
 import logoImg from '../../assets/images/logo.svg'
@@ -22,7 +24,8 @@ export function AdminRoom() {
 	const params = useParams<RoomParams>()
 	const roomId = params.id
 
-	const { title, questions } = useRoom(roomId)
+	const { user } = useAuth()
+	const { title, questions, authorId, isLoading: roomLoading } = useRoom(roomId)
 
 	async function handleEndRoom() {
 		await database.ref(`rooms/${roomId}`).update({
@@ -37,6 +40,20 @@ export function AdminRoom() {
 			await database.ref(`rooms/${roomId}/questions/${questionId}`).remove()
 		}
 	}, [roomId])
+
+	useEffect(() => {
+		if (!roomLoading && (user?.id !== authorId)) {
+			toast.error('Você não tem permissão para acessar essa página', {
+				duration: 5000
+			})
+
+			history.push(`/rooms/${roomId}`)
+		}
+	}, [roomLoading, roomId, user?.id, authorId, history])
+
+	if (roomLoading) {
+		return null
+	}
 
 	return (
 		<div id="page-room">

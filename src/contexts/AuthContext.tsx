@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useState, createContext, ReactNode } from "react";
+import { useEffect, useState, createContext, ReactNode } from "react";
 
 import { firebase, auth } from '../services/firebase'
 
@@ -23,6 +22,7 @@ export const AuthContext = createContext({} as AuthContextData)
 
 export function AuthProvider({ children }: AuthProviderProps) {
 	const [user, setUser] = useState<User>()
+	const [isLoading, setIsLoading] = useState(true)
 
 	async function signInWithGoogle() {
 		const provider = new firebase.auth.GoogleAuthProvider()
@@ -53,9 +53,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 	}
 
 	useEffect(() => {
-		const unsubscribe = auth.onAuthStateChanged(user => {
-			if (user) {
-				const { displayName, photoURL, uid } = user
+		const unsubscribe = auth.onAuthStateChanged(userState => {
+			if (userState) {
+				const { displayName, photoURL, uid } = userState
 
 				if (!displayName || !photoURL) {
 					throw new Error('Missing information from Google Account.')
@@ -69,12 +69,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			} else {
 				setUser(undefined)
 			}
+
+			setIsLoading(false)
 		})
 
 		return () => {
 			unsubscribe()
 		}
 	}, [])
+
+	if (isLoading) {
+		return <p>Carregando...</p>
+	}
 
 	return (
 		<AuthContext.Provider value={{ user, signInWithGoogle, signOut }}>

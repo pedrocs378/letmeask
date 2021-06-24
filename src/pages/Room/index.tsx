@@ -1,5 +1,5 @@
-import { useState, FormEvent, useCallback } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useState, FormEvent, useCallback, useEffect } from 'react'
+import { useParams, Link, useHistory } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { GoSignOut } from 'react-icons/go'
 
@@ -20,13 +20,14 @@ interface RoomParams {
 }
 
 export function Room() {
+	const history = useHistory()
 	const params = useParams<RoomParams>()
 	const roomId = params.id
 
 	const [newQuestion, setNewQuestion] = useState('')
 
 	const { user, signInWithGoogle, signOut } = useAuth()
-	const { title, questions } = useRoom(roomId)
+	const { title, questions, authorId, isEnded, isLoading: roomLoading } = useRoom(roomId)
 
 	async function handleSendQuestion(event: FormEvent) {
 		event.preventDefault()
@@ -77,6 +78,26 @@ export function Room() {
 				})
 		}
 	}, [roomId, user])
+
+	useEffect(() => {
+		if (!roomLoading && (user?.id === authorId)) {
+			history.push(`/admin/rooms/${roomId}`)
+		}
+	}, [roomLoading, user?.id, authorId, history, roomId])
+
+	useEffect(() => {
+		if (!roomLoading && isEnded) {
+			toast('Esta sala foi encerrada', {
+				icon: '😢'
+			})
+
+			history.push('/')
+		}
+	}, [roomLoading, isEnded, history])
+
+	if (roomLoading) {
+		return null
+	}
 
 	return (
 		<div id="page-room">
