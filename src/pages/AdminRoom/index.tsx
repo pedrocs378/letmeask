@@ -1,18 +1,15 @@
-import { useState, FormEvent } from 'react'
-import { useParams } from 'react-router-dom'
-import { Link } from 'react-router-dom'
-import { toast } from 'react-hot-toast'
-import { GoSignOut } from 'react-icons/go'
+import { useCallback } from 'react'
+import { useParams, Link, useHistory } from 'react-router-dom'
 
 import { Button } from '../../components/Button'
 import { RoomCode } from '../../components/RoomCode'
 import { Question } from '../../components/Question'
 
-import { useAuth } from '../../hooks/useAuth'
 import { useRoom } from '../../hooks/useRoom'
 import { database } from '../../services/firebase'
 
 import logoImg from '../../assets/images/logo.svg'
+import deleteImg from '../../assets/images/delete.svg'
 
 import './styles.scss'
 
@@ -21,49 +18,25 @@ interface RoomParams {
 }
 
 export function AdminRoom() {
+	const history = useHistory()
 	const params = useParams<RoomParams>()
 	const roomId = params.id
 
-	const [newQuestion, setNewQuestion] = useState('')
-
-	const { user, signInWithGoogle, signOut } = useAuth()
 	const { title, questions } = useRoom(roomId)
 
-	async function handleSendQuestion(event: FormEvent) {
-		event.preventDefault()
-
-		async function sendQuestion() {
-			if (!newQuestion.trim()) {
-				return
-			}
-
-			if (!user) {
-				toast.error('Você precisa estar logado para enviar uma pergunta!')
-
-				return
-			}
-
-			const question = {
-				content: newQuestion,
-				author: {
-					name: user.name,
-					avatar: user.avatar
-				},
-				isHighlighted: false,
-				isAnswered: false
-			}
-
-			await database.ref(`rooms/${roomId}/questions`).push(question)
-
-			setNewQuestion('')
-		}
-
-		return toast.promise(sendQuestion(), {
-			loading: 'Enviando...',
-			success: 'Pergunta enviada!',
-			error: 'Algo deu errado! Tente novamente mais tarde'
+	async function handleEndRoom() {
+		await database.ref(`rooms/${roomId}`).update({
+			endedAt: new Date()
 		})
+
+		history.push('/')
 	}
+
+	const handleDeleteQuestion = useCallback(async (questionId: string) => {
+		if (window.confirm('Tem certeza que você deseja excluir esta pergunta?')) {
+			await database.ref(`rooms/${roomId}/questions/${questionId}`).remove()
+		}
+	}, [roomId])
 
 	return (
 		<div id="page-room">
@@ -78,6 +51,7 @@ export function AdminRoom() {
 						<Button
 							type="button"
 							isOutlined
+							onClick={handleEndRoom}
 						>
 							Encerrar sala
 						</Button>
@@ -100,7 +74,14 @@ export function AdminRoom() {
 								key={question.id}
 								content={question.content}
 								author={question.author}
-							/>
+							>
+								<button
+									type="button"
+									onClick={() => handleDeleteQuestion(question.id)}
+								>
+									<img src={deleteImg} alt="Remover pergunta" />
+								</button>
+							</Question>
 						)
 					})}
 				</div>

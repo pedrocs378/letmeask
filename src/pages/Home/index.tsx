@@ -50,6 +50,12 @@ export function Home() {
 				return new Error()
 			}
 
+			if (roomRef.val().endedAt) {
+				toast.error('Esta sala já foi fechada.')
+
+				return new Error()
+			}
+
 			history.push(`/rooms/${roomCode}`)
 		} finally {
 			setIsLoading(false)
