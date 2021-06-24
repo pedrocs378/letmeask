@@ -20,7 +20,7 @@ interface RoomParams {
 	id: string
 }
 
-export function Room() {
+export function AdminRoom() {
 	const params = useParams<RoomParams>()
 	const roomId = params.id
 
@@ -72,7 +72,16 @@ export function Room() {
 					<Link to="/">
 						<img src={logoImg} alt="Letmeask" />
 					</Link>
-					<RoomCode code={roomId} />
+
+					<div>
+						<RoomCode code={roomId} />
+						<Button
+							type="button"
+							isOutlined
+						>
+							Encerrar sala
+						</Button>
+					</div>
 				</div>
 			</header>
 
@@ -83,40 +92,6 @@ export function Room() {
 						<span>{questions.length} pergunta(s)</span>
 					)}
 				</div>
-
-				<form onSubmit={handleSendQuestion}>
-					<textarea
-						placeholder="O que você quer perguntar?"
-						value={newQuestion}
-						onChange={event => setNewQuestion(event.target.value)}
-					/>
-
-					<div className="form-footer">
-						{user ? (
-							<div className="user-info">
-								<img src={user.avatar} alt={user.name} />
-								<span>{user.name}</span>
-
-								<button type="button" onClick={signOut}>
-									<GoSignOut />
-								</button>
-							</div>
-						) : (
-							<span>Para enviar uma pergunta, <button
-								type="button"
-								onClick={signInWithGoogle}
-							>
-								faça seu login
-							</button>.</span>
-						)}
-						<Button
-							type="submit"
-							disabled={!user}
-						>
-							Enviar pergunta
-						</Button>
-					</div>
-				</form>
 
 				<div className="question-list">
 					{questions.map(question => {
