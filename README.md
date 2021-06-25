@@ -14,8 +14,10 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 
 ## :computer: Projeto
 
-Letmeask é uma aplicação, desenvolvida durante a NLW #06, para facilitar usuários a tirar dúvidas. Um usuário pode criar uma sala e enviar o código da mesma para outros usuários, para que eles tirem suas dúvidas ou deem likes em outras dúvidas. O usuário admin, consegue encerrar a sala quando quiser, marcar uma questão como respondida, dar destaque à uma pergunta, e excluir a pergunta.
-
+<p>Letmeask é uma aplicação, desenvolvida durante a NLW #06, para facilitar usuários a tirar dúvidas.</p>
+<p>Um usuário pode criar uma sala e enviar o código da mesma para outros usuários, para que eles tirem suas dúvidas ou deem likes em outras dúvidas.</p>
+<p>O usuário admin, consegue encerrar a sala quando quiser, marcar uma questão como respondida, dar destaque à uma pergunta, e excluir a pergunta.</p>
+ 
 ## :bookmark: Layout
 
 O layout deste projeto pode ser acessado através [desse link](https://www.figma.com/file/FJwQHhWF7Yp110aUQCtOqn/Letmeask?node-id=0%3A1). É necessário ter conta no [Figma](http://figma.com/) para acessá-lo.
