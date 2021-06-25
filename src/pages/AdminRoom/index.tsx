@@ -139,6 +139,7 @@ export function AdminRoom() {
 								)}
 								<button
 									type="button"
+									className="delete-button"
 									onClick={() => handleDeleteQuestion(question.id)}
 									title="Remover pergunta"
 								>
