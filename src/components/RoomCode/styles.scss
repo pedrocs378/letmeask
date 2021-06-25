@@ -10,6 +10,8 @@
 	display: flex;
 	align-items: center;
 
+	transition: ease 0.2s;
+
 	div {
 		background: #835afd;
 		height: 100%;
@@ -17,6 +19,8 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+
+		transition: ease 0.2s;
 	}
 
 	span {
@@ -27,5 +31,13 @@
 		width: 230px;
 		font-size: 14px;
 		font-weight: 500;
+	}
+
+	&:hover {
+		border-color: #6F4BD8;
+
+		div {
+			background: #6F4BD8;
+		}
 	}
 }

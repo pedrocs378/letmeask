@@ -6,6 +6,7 @@ import { GoSignOut } from 'react-icons/go'
 import { Button } from '../../components/Button'
 import { RoomCode } from '../../components/RoomCode'
 import { Question } from '../../components/Question'
+import { EmptyQuestions } from '../../components/EmptyQuestions'
 
 import { useAuth } from '../../hooks/useAuth'
 import { useRoom } from '../../hooks/useRoom'
@@ -153,18 +154,24 @@ export function Room() {
 				</form>
 
 				<div className="question-list">
+					{questions.length === 0 && <EmptyQuestions />}
+
 					{questions.map(question => {
 						return (
 							<Question
 								key={question.id}
 								content={question.content}
 								author={question.author}
+								isAnswered={question.isAnswered}
+								isHighlighted={question.isHighlighted}
 							>
 								<button
-									className={`like-button ${question.likeId ? 'liked' : ''}`}
+									className={`like-button ${question.likeId ? 'liked' : ''} ${question.isAnswered && question.likeCount === 0 ? 'hide' : ''}`}
 									type="button"
 									aria-label="Marcar como gostei"
+									title="Marcar como gostei"
 									onClick={() => handleLikeQuestion(question.id, question.likeId)}
+									disabled={question.isAnswered}
 								>
 									{question.likeCount > 0 && (
 										<span>{question.likeCount}</span>

@@ -54,6 +54,8 @@
 				box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 				resize: vertical;
 				min-height: 130px;
+
+				outline-color: #8354fd;
 			}
 
 			.form-footer {
@@ -115,6 +117,10 @@
 
 		.question-list {
 			margin-top: 32px;
+			
+			.empty-list {
+				margin: 64px 0;
+			}
 		}
 	}
 }

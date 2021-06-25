@@ -1,0 +1,21 @@
+.empty-list {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	strong {
+		margin-top: 16px;
+		font-family: 'Poppins', sans-serif;
+		font-size: 18px;
+		color: #29292E;
+	}
+
+	p {
+		margin-top: 8px;
+		max-width: 284px;
+		text-align: center;
+		font-size: 14px;
+		line-height: 21px;
+		color: #737380;
+	}
+}

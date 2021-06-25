@@ -8,6 +8,19 @@
 		margin-top: 8px;
 	}
 
+	&.highlighted {
+		background: #f4f0ff;
+		border: 1px solid #835afd;
+
+		footer .user-info span {
+			color: #29292e;
+		}
+	}
+
+	&.answered {
+		background: #dbdcdd;
+	}
+
 	p {
 		color: #29292e;
 	}
@@ -35,12 +48,17 @@
 			}
 		}
 
+		> div:not(.user-info) {
+			display: flex;
+			gap: 16px;
+		}
+
 		button {
 			border: 0;
 			background: transparent;
 			cursor: pointer;
 
-			transition: filter 0.2s;
+			transition: ease 0.2s;
 
 			&.like-button {
 				display: flex;
@@ -57,8 +75,18 @@
 				}
 			}
 
-			&:hover {
+			&.hide {
+				display: none;
+			}
+			
+			&[disabled] {
+				cursor: not-allowed;
+				opacity: 0.6;
+			}
+
+			&:not([disabled]):hover {
 				filter: brightness(0.7);
+				transform: translateY(-6%);
 			}
 		}
 	}
