@@ -31,11 +31,13 @@ export function AdminRoom() {
 	const { title, questions, authorId, isLoading: roomLoading } = useRoom(roomId)
 
 	async function handleEndRoom() {
-		await database.ref(`rooms/${roomId}`).update({
-			endedAt: new Date()
-		})
+		if (window.confirm('Tem certeza que você deseja encerrar esta sala?')) {
+			await database.ref(`rooms/${roomId}`).update({
+				endedAt: new Date()
+			})
 
-		history.push('/')
+			history.push('/')
+		}
 	}
 
 	const handleCheckQuestionAsAnswered = useCallback(async (questionId: string) => {
